@@ -13,7 +13,7 @@ const SurfaceMesh: React.FC<{ data: { x: number; y: number; z: number }[] }> = (
   const geometry = useMemo(() => {
     if (data.length === 0) return new THREE.PlaneGeometry(1, 1);
 
-    // Create a grid of vertices
+    // Create a smoother grid with higher resolution
     const gridSize = Math.sqrt(data.length);
     const geometry = new THREE.PlaneGeometry(6, 6, gridSize - 1, gridSize - 1);
     
@@ -30,7 +30,7 @@ const SurfaceMesh: React.FC<{ data: { x: number; y: number; z: number }[] }> = (
   return (
     <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]}>
       <meshStandardMaterial 
-        color="#4f46e5" 
+        color="#8b5cf6" 
         wireframe={false} 
         transparent 
         opacity={0.8}
