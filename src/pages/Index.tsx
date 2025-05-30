@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { FunctionInput } from '@/components/FunctionInput';
 import { GraphDisplay } from '@/components/GraphDisplay';
@@ -34,7 +33,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-light text-white mb-4">
-            Critical Point Analyzer
+            Critical Points Analyzer
           </h1>
           <p className="text-white/60">
             Visualize two-variable functions and find critical points
