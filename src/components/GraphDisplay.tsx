@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Scatter3DChart, ScatterChart, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer, Scatter } from 'recharts';
+import { ScatterChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Scatter } from 'recharts';
 
 interface GraphDisplayProps {
   data: { x: number; y: number; z: number }[];
