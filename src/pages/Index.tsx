@@ -52,7 +52,7 @@ const Index = () => {
             </h1>
           </div>
           <p className="text-purple-200 text-lg max-w-2xl mx-auto">
-            Enter a mathematical function to find its critical points and visualize them on an interactive graph
+            Find critical points and visualize mathematical functions with interactive graphs
           </p>
         </div>
 
@@ -89,33 +89,6 @@ const Index = () => {
                 <p className="text-white font-mono text-lg">f(x) = {functionExpression}</p>
               </div>
               <CriticalPointsDisplay points={criticalPoints} />
-            </div>
-          </div>
-        )}
-
-        {/* Instructions */}
-        {!functionExpression && (
-          <div className="mt-12 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 text-center">
-            <h3 className="text-2xl font-semibold text-white mb-4">How to Use</h3>
-            <div className="grid md:grid-cols-3 gap-6 text-purple-200">
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto text-white font-bold text-xl">1</div>
-                <h4 className="font-semibold text-white">Enter Function</h4>
-                <p className="text-sm">Type a mathematical function using x as the variable</p>
-              </div>
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto text-white font-bold text-xl">2</div>
-                <h4 className="font-semibold text-white">Analyze</h4>
-                <p className="text-sm">The app automatically finds critical points where f'(x) = 0</p>
-              </div>
-              <div className="space-y-2">
-                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto text-white font-bold text-xl">3</div>
-                <h4 className="font-semibold text-white">Visualize</h4>
-                <p className="text-sm">View the graph with highlighted critical points</p>
-              </div>
-            </div>
-            <div className="mt-6 text-sm text-purple-300">
-              <p>Examples: x^2, x^3-3*x^2+2, sin(x), x^2-4*x+3</p>
             </div>
           </div>
         )}
