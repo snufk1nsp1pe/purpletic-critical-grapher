@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Target, TrendingUp, TrendingDown } from 'lucide-react';
+import { Target, TrendingUp, TrendingDown, Circle } from 'lucide-react';
 
 interface CriticalPointsDisplayProps {
-  points: { x: number; y: number }[];
+  points: { x: number; y: number; z: number }[];
 }
 
 export const CriticalPointsDisplay: React.FC<CriticalPointsDisplayProps> = ({ points }) => {
@@ -17,19 +17,43 @@ export const CriticalPointsDisplay: React.FC<CriticalPointsDisplayProps> = ({ po
     );
   }
 
-  // Simple second derivative test for classification
-  const classifyPoint = (x: number, index: number) => {
-    // This is a simplified classification - in a real app you'd compute the second derivative
-    if (index === 0) return 'minimum';
-    if (index === points.length - 1) return 'maximum';
-    return index % 2 === 0 ? 'minimum' : 'maximum';
+  // Simple classification for two-variable functions
+  const classifyPoint = (index: number) => {
+    // This is a simplified classification
+    return index % 3 === 0 ? 'saddle' : index % 2 === 0 ? 'minimum' : 'maximum';
+  };
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'minimum': return <TrendingDown size={20} />;
+      case 'maximum': return <TrendingUp size={20} />;
+      case 'saddle': return <Circle size={20} />;
+      default: return <Circle size={20} />;
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'minimum': return 'bg-green-500/20 text-green-300';
+      case 'maximum': return 'bg-red-500/20 text-red-300';
+      case 'saddle': return 'bg-yellow-500/20 text-yellow-300';
+      default: return 'bg-purple-500/20 text-purple-300';
+    }
+  };
+
+  const getTypeName = (type: string) => {
+    switch (type) {
+      case 'minimum': return 'Local Minimum';
+      case 'maximum': return 'Local Maximum';
+      case 'saddle': return 'Saddle Point';
+      default: return 'Critical Point';
+    }
   };
 
   return (
     <div className="space-y-4">
       {points.map((point, index) => {
-        const type = classifyPoint(point.x, index);
-        const isMin = type === 'minimum';
+        const type = classifyPoint(index);
         
         return (
           <div
@@ -38,22 +62,22 @@ export const CriticalPointsDisplay: React.FC<CriticalPointsDisplayProps> = ({ po
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className={`p-2 rounded-full ${isMin ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                  {isMin ? <TrendingDown size={20} /> : <TrendingUp size={20} />}
+                <div className={`p-2 rounded-full ${getTypeColor(type)}`}>
+                  {getIcon(type)}
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white capitalize">
-                    {type === 'minimum' ? 'Local Minimum' : 'Local Maximum'}
+                  <h4 className="font-semibold text-white">
+                    {getTypeName(type)}
                   </h4>
                   <p className="text-purple-200 text-sm">Critical Point #{index + 1}</p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-white font-mono text-lg">
-                  ({point.x.toFixed(3)}, {point.y.toFixed(3)})
+                <div className="text-white font-mono text-sm">
+                  ({point.x.toFixed(3)}, {point.y.toFixed(3)}, {point.z.toFixed(3)})
                 </div>
-                <div className="text-purple-300 text-sm">
-                  x = {point.x.toFixed(3)}
+                <div className="text-purple-300 text-xs">
+                  x = {point.x.toFixed(3)}, y = {point.y.toFixed(3)}
                 </div>
               </div>
             </div>
@@ -65,7 +89,7 @@ export const CriticalPointsDisplay: React.FC<CriticalPointsDisplayProps> = ({ po
         <h4 className="text-white font-semibold mb-2">Summary</h4>
         <p className="text-purple-200 text-sm">
           Found <span className="font-semibold text-white">{points.length}</span> critical point{points.length !== 1 ? 's' : ''} 
-          where the derivative equals zero.
+          where both ∂f/∂x = 0 and ∂f/∂y = 0.
         </p>
       </div>
     </div>

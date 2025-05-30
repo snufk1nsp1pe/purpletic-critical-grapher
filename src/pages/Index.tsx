@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
 import { FunctionInput } from '@/components/FunctionInput';
 import { GraphDisplay } from '@/components/GraphDisplay';
 import { CriticalPointsDisplay } from '@/components/CriticalPointsDisplay';
-import { findCriticalPoints, generateGraphData } from '@/utils/mathUtils';
+import { findCriticalPoints, generateSurfaceData } from '@/utils/mathUtils';
 import { Calculator } from 'lucide-react';
 
 const Index = () => {
   const [functionExpression, setFunctionExpression] = useState('');
-  const [criticalPoints, setCriticalPoints] = useState<{x: number, y: number}[]>([]);
-  const [graphData, setGraphData] = useState<{x: number, y: number}[]>([]);
+  const [criticalPoints, setCriticalPoints] = useState<{x: number, y: number, z: number}[]>([]);
+  const [graphData, setGraphData] = useState<{x: number, y: number, z: number}[]>([]);
   const [error, setError] = useState('');
 
   const handleFunctionSubmit = (expression: string) => {
@@ -17,8 +16,8 @@ const Index = () => {
       setError('');
       setFunctionExpression(expression);
       
-      // Generate graph data
-      const data = generateGraphData(expression);
+      // Generate surface data
+      const data = generateSurfaceData(expression);
       setGraphData(data);
       
       // Find critical points
@@ -52,7 +51,7 @@ const Index = () => {
             </h1>
           </div>
           <p className="text-purple-200 text-lg max-w-2xl mx-auto">
-            Find critical points and visualize mathematical functions with interactive graphs
+            Find critical points and visualize two-variable mathematical functions with interactive surface plots
           </p>
         </div>
 
@@ -73,7 +72,7 @@ const Index = () => {
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
               <h2 className="text-2xl font-semibold text-white mb-4 flex items-center">
                 <span className="w-3 h-3 bg-purple-400 rounded-full mr-2"></span>
-                Function Graph
+                Surface Plot
               </h2>
               <GraphDisplay data={graphData} criticalPoints={criticalPoints} />
             </div>
@@ -86,7 +85,7 @@ const Index = () => {
               </h2>
               <div className="mb-4 p-3 bg-purple-800/30 rounded-lg">
                 <p className="text-purple-200 text-sm mb-1">Function:</p>
-                <p className="text-white font-mono text-lg">f(x) = {functionExpression}</p>
+                <p className="text-white font-mono text-lg">f(x,y) = {functionExpression}</p>
               </div>
               <CriticalPointsDisplay points={criticalPoints} />
             </div>

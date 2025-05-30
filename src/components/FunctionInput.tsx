@@ -24,10 +24,10 @@ export const FunctionInput: React.FC<FunctionInputProps> = ({ onSubmit }) => {
   };
 
   const examples = [
-    'x^2',
-    'x^3-3*x^2+2',
-    'x^2-4*x+3',
-    'x^4-4*x^2'
+    'x^2 + y^2',
+    'x^2 - y^2',
+    'x^3 - 3*x*y^2',
+    'sin(x)*cos(y)'
   ];
 
   return (
@@ -37,7 +37,7 @@ export const FunctionInput: React.FC<FunctionInputProps> = ({ onSubmit }) => {
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-30"></div>
           <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 shadow-2xl">
             <label htmlFor="function" className="block text-lg font-medium text-white mb-3">
-              Enter Mathematical Function f(x)
+              Enter Mathematical Function f(x,y)
             </label>
             <div className="flex gap-3">
               <div className="flex-1 relative">
@@ -46,7 +46,7 @@ export const FunctionInput: React.FC<FunctionInputProps> = ({ onSubmit }) => {
                   type="text"
                   value={expression}
                   onChange={(e) => setExpression(e.target.value)}
-                  placeholder="e.g., x^2, x^3-3*x^2+2, sin(x)"
+                  placeholder="e.g., x^2 + y^2, x^2 - y^2, sin(x)*cos(y)"
                   className="text-lg h-14 bg-white/20 border-white/30 text-white placeholder-purple-200 focus:border-purple-400 focus:ring-purple-400/50"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">

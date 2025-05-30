@@ -1,9 +1,8 @@
 
-// Simple math expression evaluator and critical point finder
-// Note: This is a simplified implementation for demonstration
+// Math utilities for two-variable functions f(x,y)
 
-export const evaluateExpression = (expression: string, x: number): number => {
-  // Replace x with the actual value and handle basic operations
+export const evaluateExpression = (expression: string, x: number, y: number): number => {
+  // Replace x and y with actual values and handle basic operations
   let expr = expression.toLowerCase();
   
   // Replace mathematical functions
@@ -17,7 +16,8 @@ export const evaluateExpression = (expression: string, x: number): number => {
   // Handle power notation
   expr = expr.replace(/\^/g, '**');
   
-  // Replace x with the actual value
+  // Replace x and y with actual values - be careful with order
+  expr = expr.replace(/y/g, `(${y})`);
   expr = expr.replace(/x/g, `(${x})`);
   
   try {
@@ -28,87 +28,95 @@ export const evaluateExpression = (expression: string, x: number): number => {
   }
 };
 
-export const generateGraphData = (expression: string, xMin: number = -5, xMax: number = 5, steps: number = 200): { x: number; y: number }[] => {
-  const data: { x: number; y: number }[] = [];
-  const stepSize = (xMax - xMin) / steps;
+export const generateSurfaceData = (
+  expression: string, 
+  xMin: number = -3, 
+  xMax: number = 3, 
+  yMin: number = -3, 
+  yMax: number = 3, 
+  steps: number = 30
+): { x: number; y: number; z: number }[] => {
+  const data: { x: number; y: number; z: number }[] = [];
+  const xStepSize = (xMax - xMin) / steps;
+  const yStepSize = (yMax - yMin) / steps;
   
   for (let i = 0; i <= steps; i++) {
-    const x = xMin + i * stepSize;
-    try {
-      const y = evaluateExpression(expression, x);
-      if (isFinite(y) && !isNaN(y)) {
-        data.push({ x, y });
+    for (let j = 0; j <= steps; j++) {
+      const x = xMin + i * xStepSize;
+      const y = yMin + j * yStepSize;
+      try {
+        const z = evaluateExpression(expression, x, y);
+        if (isFinite(z) && !isNaN(z)) {
+          data.push({ x, y, z });
+        }
+      } catch (error) {
+        // Skip invalid points
       }
-    } catch (error) {
-      // Skip invalid points
     }
   }
   
   return data;
 };
 
-// Simplified derivative calculation using numerical differentiation
-const numericalDerivative = (expression: string, x: number, h: number = 0.0001): number => {
+// Numerical partial derivatives
+const partialDerivativeX = (expression: string, x: number, y: number, h: number = 0.001): number => {
   try {
-    const f1 = evaluateExpression(expression, x + h);
-    const f2 = evaluateExpression(expression, x - h);
+    const f1 = evaluateExpression(expression, x + h, y);
+    const f2 = evaluateExpression(expression, x - h, y);
     return (f1 - f2) / (2 * h);
   } catch (error) {
     return NaN;
   }
 };
 
-export const findCriticalPoints = (expression: string, xMin: number = -5, xMax: number = 5, precision: number = 0.01): { x: number; y: number }[] => {
-  const criticalPoints: { x: number; y: number }[] = [];
+const partialDerivativeY = (expression: string, x: number, y: number, h: number = 0.001): number => {
+  try {
+    const f1 = evaluateExpression(expression, x, y + h);
+    const f2 = evaluateExpression(expression, x, y - h);
+    return (f1 - f2) / (2 * h);
+  } catch (error) {
+    return NaN;
+  }
+};
+
+export const findCriticalPoints = (
+  expression: string, 
+  xMin: number = -3, 
+  xMax: number = 3, 
+  yMin: number = -3, 
+  yMax: number = 3, 
+  precision: number = 0.1
+): { x: number; y: number; z: number }[] => {
+  const criticalPoints: { x: number; y: number; z: number }[] = [];
   const stepSize = precision;
   
-  let prevDerivative = numericalDerivative(expression, xMin);
-  
-  for (let x = xMin + stepSize; x <= xMax; x += stepSize) {
-    const currentDerivative = numericalDerivative(expression, x);
-    
-    // Look for sign changes in the derivative (indicating critical points)
-    if (!isNaN(prevDerivative) && !isNaN(currentDerivative)) {
-      if ((prevDerivative > 0 && currentDerivative < 0) || (prevDerivative < 0 && currentDerivative > 0)) {
-        try {
-          const y = evaluateExpression(expression, x);
-          if (isFinite(y) && !isNaN(y)) {
-            // Refine the critical point location
-            let refinedX = x;
-            let minDerivative = Math.abs(currentDerivative);
-            
-            // Simple refinement by checking nearby points
-            for (let delta = -stepSize; delta <= stepSize; delta += stepSize / 10) {
-              const testX = x + delta;
-              if (testX >= xMin && testX <= xMax) {
-                const testDerivative = Math.abs(numericalDerivative(expression, testX));
-                if (testDerivative < minDerivative) {
-                  minDerivative = testDerivative;
-                  refinedX = testX;
-                }
+  for (let x = xMin; x <= xMax; x += stepSize) {
+    for (let y = yMin; y <= yMax; y += stepSize) {
+      const dfdx = partialDerivativeX(expression, x, y);
+      const dfdy = partialDerivativeY(expression, x, y);
+      
+      // Look for points where both partial derivatives are close to zero
+      if (!isNaN(dfdx) && !isNaN(dfdy)) {
+        if (Math.abs(dfdx) < 0.01 && Math.abs(dfdy) < 0.01) {
+          try {
+            const z = evaluateExpression(expression, x, y);
+            if (isFinite(z) && !isNaN(z)) {
+              // Avoid duplicate points
+              const isDuplicate = criticalPoints.some(point => 
+                Math.abs(point.x - x) < precision && Math.abs(point.y - y) < precision
+              );
+              
+              if (!isDuplicate) {
+                criticalPoints.push({ x, y, z });
               }
             }
-            
-            const refinedY = evaluateExpression(expression, refinedX);
-            
-            // Avoid duplicate points
-            const isDuplicate = criticalPoints.some(point => 
-              Math.abs(point.x - refinedX) < precision * 2
-            );
-            
-            if (!isDuplicate) {
-              criticalPoints.push({ x: refinedX, y: refinedY });
-            }
+          } catch (error) {
+            // Skip invalid points
           }
-        } catch (error) {
-          // Skip invalid points
         }
       }
     }
-    
-    prevDerivative = currentDerivative;
   }
   
-  // Sort by x coordinate
-  return criticalPoints.sort((a, b) => a.x - b.x);
+  return criticalPoints;
 };
